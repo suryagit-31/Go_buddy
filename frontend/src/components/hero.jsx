@@ -16,8 +16,8 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Helping elderly travelers
-            <br className="hidden md:inline" /> find trusted companions
+            Find Your Perfect
+            <br className="hidden md:inline" /> Travel & Housing Companion
           </motion.h1>
 
           <motion.p
@@ -26,23 +26,30 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Travel with confidence knowing you have a companion by your side
-            throughout your journey.
+            Connect with trusted companions for travel and housing, making your
+            journey safer and more enjoyable.
           </motion.p>
-
-          <motion.div
-            className="mt-8 md:mt-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Link
-              to={isAuthenticated ? "/search" : "/signup"}
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base md:text-lg font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition duration-150 ease-in-out"
+          <div>
+            <motion.div
+              className="mt-8 md:mt-10 space-x-4  max-sm:flex max-sm:flex-col max-sm:items-center max-sm:space-y-2 max-sm:my-2 max-sm:py-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {isAuthenticated ? "Find a Companion" : "Get Started"}
-            </Link>
-          </motion.div>
+              <Link
+                to={isAuthenticated ? "/search" : "/signup"}
+                className="inline-flex items-center  px-6 py-3  border border-transparent text-base md:text-lg font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition duration-150 ease-in-out"
+              >
+                Find Travel Buddy
+              </Link>
+              <Link
+                to={isAuthenticated ? "/housing" : "/signup"}
+                className="inline-flex items-center px-6 py-3  border border-primary-600 text-base md:text-lg font-medium rounded-md shadow-sm text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition duration-150 ease-in-out"
+              >
+                Find Room Buddy
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -11,6 +11,8 @@ import AboutPage from "./pages/about";
 import ProfilePage from "./pages/profilepage";
 import FlightSearchPage from "./pages/findflights";
 import BookingsPage from "./pages/bookingspage";
+import HousingPage from "./pages/housingpage";
+import FlightJoinpage from "./pages/flightjoinpage";
 function App() {
   return (
     <>
@@ -26,6 +28,11 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/search" element={<FlightSearchPage />} />
               <Route path="/bookings" element={<BookingsPage />} />
+              <Route path="/housing" element={<HousingPage />} />
+              <Route
+                path="/flightjoin/:iata/:date"
+                element={<FlightJoinpage />}
+              />
             </Routes>
           </AnimatePresence>
         </main>

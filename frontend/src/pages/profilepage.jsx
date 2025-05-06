@@ -16,7 +16,7 @@ const ProfilePage = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: user?.name || "",
+      name: user?.name || "user",
       email: user?.email || "",
       phone: "(123) 456-7890",
       city: "New York",
@@ -65,7 +65,7 @@ const ProfilePage = () => {
             </div>
 
             <div className="border-t border-neutral-200">
-              {isEditing ? (
+              {
                 <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-6">
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -293,33 +293,30 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6 flex justify-end space-x-3">
-                    <motion.button
-                      type="button"
-                      onClick={() => setIsEditing(false)}
-                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Cancel
-                    </motion.button>
-                    <motion.button
-                      type="submit"
-                      disabled={isSaving}
-                      className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {isSaving ? "Saving..." : "Save Changes"}
-                    </motion.button>
-                  </div>
+                  {isEditing && (
+                    <div className="mt-6 flex justify-end space-x-3">
+                      <motion.button
+                        type="button"
+                        onClick={() => setIsEditing(false)}
+                        className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Cancel
+                      </motion.button>
+                      <motion.button
+                        type="submit"
+                        disabled={isSaving}
+                        className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {isSaving ? "Saving..." : "Save Changes"}
+                      </motion.button>
+                    </div>
+                  )}
                 </form>
-              ) : (
-                // View mode rendering (unchanged from your original)
-                <div className="px-4 py-5 sm:p-6">
-                  {/* ... display-only version remains unchanged ... */}
-                </div>
-              )}
+              }
             </div>
           </div>
         </div>

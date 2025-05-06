@@ -1,24 +1,30 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
+import useFlightStore from "../store/useflightstore";
 
 const FlightSearchForm = ({ compact = false }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { fetchFlights } = useFlightStore();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      from: "",
-      to: "",
-      date: new Date().toISOString().split("T")[0],
+      dep_iata: "",
+      arr_iata: "",
+      flight_date: new Date().toISOString().split("T")[0],
     },
   });
 
   const onSubmit = (data) => {
-    navigate("/search", { state: { searchData: data } });
+    if (location.pathname === "/search") fetchFlights(data);
+    else {
+      navigate("/search", { state: { searchData: data } });
+    }
   };
 
   return (
@@ -52,11 +58,12 @@ const FlightSearchForm = ({ compact = false }) => {
             <input
               id="from"
               type="text"
-              placeholder="City or airport"
-              className={`w-full p-3 text-lg rounded-md border ${
+              placeholder="departure iata code"
+              autoCapitalize="on"
+              className={`w-full p-3 text-lg rounded-md border uppercase ${
                 errors.from ? "border-error-500" : "border-neutral-300"
               } focus:outline-none focus:ring-2 focus:ring-primary-500`}
-              {...register("from", { required: "From location is required" })}
+              {...register("dep_iata", { required: "From location is required" })}
             />
             {errors.from && (
               <p className="mt-1 text-sm text-error-600">
@@ -75,11 +82,11 @@ const FlightSearchForm = ({ compact = false }) => {
             <input
               id="to"
               type="text"
-              placeholder="City or airport"
-              className={`w-full p-3 text-lg rounded-md border ${
+              placeholder="arrival iata code"
+              className={`w-full p-3 text-lg rounded-md border uppercase ${
                 errors.to ? "border-error-500" : "border-neutral-300"
               } focus:outline-none focus:ring-2 focus:ring-primary-500`}
-              {...register("to", { required: "To location is required" })}
+              {...register("arr_iata", { required: "To location is required" })}
             />
             {errors.to && (
               <p className="mt-1 text-sm text-error-600">{errors.to.message}</p>
@@ -99,7 +106,7 @@ const FlightSearchForm = ({ compact = false }) => {
               className={`w-full p-3 text-lg rounded-md border ${
                 errors.date ? "border-error-500" : "border-neutral-300"
               } focus:outline-none focus:ring-2 focus:ring-primary-500`}
-              {...register("date", { required: "Date is required" })}
+              {...register("flight_date", { required: "Date is required" })}
             />
             {errors.date && (
               <p className="mt-1 text-sm text-error-600">

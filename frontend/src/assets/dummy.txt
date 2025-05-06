@@ -1,0 +1,33 @@
+ {selectedFlight && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+                Matching Companions
+              </h2>
+
+              {requestSent ? (
+                <div className="bg-success-50 border border-success-200 text-success-800 px-4 py-3 rounded-md">
+                  <p>
+                    Travel request sent successfully! The companion will be
+                    notified.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {mockCompanions.map((companion) => (
+                    <CompanionCard
+                      key={companion.id}
+                      name={companion.name}
+                      age={companion.age}
+                      location={companion.location}
+                      languages={companion.languages}
+                      onRequestTravel={handleRequestTravel}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}

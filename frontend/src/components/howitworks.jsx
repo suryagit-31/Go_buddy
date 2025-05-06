@@ -1,27 +1,42 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { UserRound, Search, Users } from "lucide-react";
+import { UserRound, Search, Users, Home, Plane } from "lucide-react";
 
 const steps = [
   {
     id: 1,
-    title: "Register",
+    title: "Create Your Profile",
     description:
-      "Create your account with your personal details and preferences.",
+      "Sign up and tell us about yourself, your preferences, and needs.",
     icon: UserRound,
   },
   {
     id: 2,
-    title: "Enter your journey details",
+    title: "Choose Your Goal",
     description:
-      "Tell us about your travel plans, including dates and destinations.",
+      "Looking for a travel companion or housing buddy? Select your path.",
     icon: Search,
   },
   {
     id: 3,
-    title: "Connect with a companion",
+    title: "Connect & Travel",
+    description: "Find and connect with travel companions for your journey.",
+    icon: Plane,
+    type: "travel",
+  },
+  {
+    id: 4,
+    title: "Find Housing",
     description:
-      "Browse and connect with potential travel companions for your journey.",
+      "Browse housing listings or post your own to find the perfect match.",
+    icon: Home,
+    type: "housing",
+  },
+  {
+    id: 5,
+    title: "Build Trust",
+    description:
+      "Get to know your companion through our safe communication platform.",
     icon: Users,
   },
 ];
@@ -41,7 +56,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const HowItWorks=() => {
+const HowItWorks= () => {
   return (
     <section className="py-12 md:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +65,7 @@ const HowItWorks=() => {
             How it works
           </h2>
           <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-            Just three simple steps to find your perfect travel companion
+            Simple steps to find your perfect travel or housing companion
           </p>
         </div>
 
@@ -67,19 +82,21 @@ const HowItWorks=() => {
               className="flex flex-col items-center text-center"
               variants={item}
             >
-              <div className="flex justify-center items-center w-16 h-16 rounded-full bg-primary-100 text-primary-600 mb-4">
+              <div
+                className={`flex justify-center items-center w-16 h-16 rounded-full ${
+                  step.type === "travel"
+                    ? "bg-primary-100 text-primary-600"
+                    : step.type === "housing"
+                    ? "bg-secondary-100 text-secondary-600"
+                    : "bg-primary-100 text-primary-600"
+                } mb-4`}
+              >
                 <step.icon size={28} />
               </div>
               <h3 className="text-lg font-medium text-neutral-900 mb-2">
                 {step.title}
               </h3>
               <p className="text-neutral-600">{step.description}</p>
-
-              {step.id < steps.length && (
-                <div className="hidden md:block absolute right-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                  <div className="h-0.5 w-8 bg-neutral-200" />
-                </div>
-              )}
             </motion.div>
           ))}
         </motion.div>

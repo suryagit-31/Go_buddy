@@ -6,15 +6,15 @@ dotenv.config();
 const AVIATION_BASEURL = "https://api.aviationstack.com/v1/flights";
 const Aviation_key = process.env.AVIATIONSTACK_APIKEY;
 
-async function getFlightsByRouteAndDate(dep_iata, arr_iata, flight_date) {
+async function getflightby_iata_and_Date(flight_iata, flight_date) {
   try {
     console.log("API KEY:", Aviation_key);
 
     const response = await axios.get(AVIATION_BASEURL, {
       params: {
         access_key: Aviation_key,
-        dep_iata: dep_iata,
-        arr_iata: arr_iata,
+        flight_iata: flight_iata,
+        //flight_date: flight_date,
       },
     });
 
@@ -33,4 +33,4 @@ async function getFlightsByRouteAndDate(dep_iata, arr_iata, flight_date) {
   }
 }
 
-export default getFlightsByRouteAndDate;
+export default getflightby_iata_and_Date;

@@ -1,6 +1,6 @@
 import React from "react";
 import PageTransition from "../components/pagetransition";
-import Hero from "../components/Hero";
+import Hero from "../components/hero";
 import HowItWorks from "../components/howitworks";
 import FlightSearchForm from "../components/flightsearchform";
 
