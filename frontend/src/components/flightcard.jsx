@@ -39,7 +39,8 @@ const FlightCard = ({ flightNumber, airline, from, to, date, onJoin }) => {
         </div>
 
         <div className="mt-2">
-          <p className="text-md text-neutral-800">{date}</p>
+          <p className="text-md text-neutral-800">{date}
+</p>
         </div>
       </div>
     </motion.div>

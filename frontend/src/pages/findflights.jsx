@@ -13,17 +13,16 @@ const FlightSearchPage = () => {
   const [requestSent, setRequestSent] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { available_flights, isloadingflights } = useFlightStore();
+  const { available_flights, isloadingflights, get_joinflight } =
+    useFlightStore();
 
-  const handleJoinFlight = (iata, date) => {
+  const handleJoinFlight = async (iata, date) => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
-
     // Encode the date to make it URL-safe (important!)
     const encodedDate = encodeURIComponent(date);
-
     navigate(`/flightjoin/${iata}/${encodedDate}`);
   };
 
@@ -62,6 +61,7 @@ const FlightSearchPage = () => {
                     from={flight.departure?.iata || flight.departure?.airport}
                     to={flight.arrival?.iata || flight.arrival?.airport}
                     date={new Date(flight.flight_date).toDateString()}
+        
                     onJoin={() =>
                       handleJoinFlight(flight.flight.iata, flight.flight_date)
                     }

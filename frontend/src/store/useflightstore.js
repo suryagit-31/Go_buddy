@@ -4,21 +4,21 @@ import axiosInstance from "../utils/axios";
 const useFlightStore = create((set) => ({
   available_flights: [],
   isloadingflights: false,
-  join_flight: [],
+  join_flight: null,
   is_joiningflight: false,
 
   fetchFlights: async (data) => {
     try {
       set({ isloadingflights: true });
       const response = await axiosInstance.post("/flights", data);
-      console.log("response", response);
+    //  console.log("response", response);
       set({ available_flights: [...response.data], isloadingflights: false });
     } catch (error) {
       console.log("Error fetching flights in your input :", error);
       if (error.response && error.response.status == 500) {
-        alert("No flight data found for the given route and date.");
+        console.log("No flight data found for the given route and date.");
       } else {
-        alert("something went wrong");
+        console.log("something went wrong");
       }
     }
   },
@@ -28,16 +28,19 @@ const useFlightStore = create((set) => ({
   get_joinflight: async (iata, date) => {
     try {
       set({ is_joiningflight: true });
-      const response = await axiosInstance.get(`/flights/${iata}/${date}`);
-      console.log("response", response);
-      set({ join_flight: [...response.data] });
+      //console.log("✈️ Calling flightjoin with:", iata, date);
+      const response = await axiosInstance.get(
+        `/flights/flightjoin/${iata}/${date}`
+      );
+     console.log("response", response.data);
+      set({ join_flight: response.data });
       set({ is_joiningflight: false });
     } catch (error) {
       console.log(" error to join the flight:", error);
       if (error.response && error.response.status == 500) {
-        alert("No flight data found for the given route and date.");
+        console.log("No flight data found for the given route and date.");
       } else {
-        alert("something went wrong");
+        console.log("something went wrong");
       }
     }
   },

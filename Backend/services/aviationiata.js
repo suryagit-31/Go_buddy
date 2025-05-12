@@ -8,7 +8,7 @@ const Aviation_key = process.env.AVIATIONSTACK_APIKEY;
 
 async function getflightby_iata_and_Date(flight_iata, flight_date) {
   try {
-    console.log("API KEY:", Aviation_key);
+   // console.log("API KEY:", Aviation_key);
 
     const response = await axios.get(AVIATION_BASEURL, {
       params: {

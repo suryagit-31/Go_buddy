@@ -15,99 +15,43 @@ import PageTransition from "../components/pagetransition";
 import { useAuth } from "../context/authcontext";
 import Flightcompanioncard from "../components/flightcompanioncard";
 import useFlightStore from "../store/useflightstore";
+import Helpfrom from "../components/helpfrom";
 
 const FlightJoinpage = () => {
-  const { user } = useAuth();
   const { iata, date } = useParams();
   const [flightData, setFlightData] = useState([]);
   const { join_flight, get_joinflight, is_joiningflight } = useFlightStore();
 
-  const [showJoinForm, setShowJoinForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    age: "",
-    languages: "",
-    phone: "",
-    type: "seeker",
-    country: "",
-    email: "",
-    seatNumber: "",
-    description: "",
-    isPaidHelper: false,
-    helperPrice: "",
-  });
-
-  const flightDetails = {
-    id: "1",
-    flightNumber: "DL 114",
-    from: "New York (JFK)",
-    to: "Paris (CDG)",
-    date: "May 20, 2025",
-    departureTime: "10:30 AM",
-    arrivalTime: "11:45 PM",
-    terminal: "Terminal 4",
-    gate: "Gate B12",
-    companions: [
-      {
-        id: "1",
-        name: "John Smith",
-        age: 65,
-        languages: ["English", "French"],
-        phone: "+1 234-567-8900",
-        type: "helper",
-        status: "booked",
-        country: "United States",
-        email: "john@example.com",
-        seatNumber: "12A",
-        description:
-          "Experienced traveler, happy to assist with luggage and navigation.",
-        isPaidHelper: true,
-        helperPrice: 50,
-      },
-      {
-        id: "2",
-        name: "Maria Garcia",
-        age: 70,
-        languages: ["Spanish", "English"],
-        phone: "+1 234-567-8901",
-        type: "seeker",
-        status: "vacant",
-        country: "Spain",
-        email: "maria@example.com",
-        seatNumber: "14C",
-        description:
-          "First time traveling to Paris, would appreciate help with transfers.",
-      },
-    ],
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       await get_joinflight(iata, date);
-      setFlightData(join_flight); 
     };
     fetchData();
   }, [iata, date]);
 
-
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      const checked = e.target.checked;
-      setFormData((prev) => ({ ...prev, [name]: checked }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    if (join_flight) {
+      setFlightData(join_flight); // Set the flight data once `join_flight` has been updated
+      console.log("Flight data:", join_flight); // Log the updated data
     }
-  };
+  }, [join_flight]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.description && formData.description.split(" ").length > 100) {
-      alert("Description must not exceed 100 words");
-      return;
+  const flight_duration = () => {
+    const depTime = new Date(flightData[0]?.departure?.scheduled);
+    const arrTime = new Date(flightData[0]?.arrival?.scheduled);
+
+    const durationMs = arrTime - depTime;
+    const durationMinutes = Math.floor(durationMs / (1000 * 60));
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+
+    const flightDuration = `${hours}h ${minutes}m`;
+
+    if (flightDuration === "NANh NaNm") {
+      return "N/A";
     }
-    console.log("Joining flight with details:", formData);
-    setShowJoinForm(false);
+
+    return flightDuration;
   };
 
   return (
@@ -120,285 +64,131 @@ const FlightJoinpage = () => {
               <div>
                 <div className="bg-white rounded-lg shadow-soft p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-neutral-900">
+                    <h2 className="text-2xl font-semibold text-neutral-900">
                       Flight Details
                     </h2>
                     <Plane className="h-6 w-6 text-primary-600" />
                   </div>
 
-                  <dl className="grid grid-cols-1 gap-4">
-                    <div>
-                      <dt className="text-sm font-medium text-neutral-500">
-                        {flightData.flight.iata}
-                      </dt>
-                      <dd className="mt-1 text-lg text-neutral-900">
-                        {flightDetails.flightNumber}
-                      </dd>
-                    </div>
+                  {flightData.length > 0 ? (
+                    <dl className="grid grid-cols-1 gap-4">
+                      <div>
+                        <dt className="text-xl font-bold text-primary-600">
+                          {flightData[0]?.airline?.name || "IATA not found"}
+                        </dt>
+                        <dd className="mt-1 text-lg text-neutral-900">
+                          {flightData[0]?.airline?.iata &&
+                          flightData[0]?.flight?.number
+                            ? `${flightData[0].airline.iata} ${flightData[0].flight.number}   (${flightData[0].flight_date})`
+                            : "Flight Number"}
+                        </dd>
+                      </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          From
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.from}
-                        </dd>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            From
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.departure?.airport}(
+                            {flightData[0]?.departure?.iata})
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            To
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.arrival?.airport}(
+                            {flightData[0]?.arrival?.iata})
+                          </dd>
+                        </div>
                       </div>
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          To
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.to}
-                        </dd>
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          Departure
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.departureTime}
-                        </dd>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            Scheduled-Departure
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.departure?.scheduled &&
+                            flightData[0]?.departure?.timezone
+                              ? new Intl.DateTimeFormat("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  timeZone: flightData[0]?.departure?.timezone,
+                                  timeZoneName: "short",
+                                  hour12: false,
+                                }).format(
+                                  new Date(flightData[0]?.departure?.scheduled)
+                                )
+                              : "Time not available"}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            Scheduled-Arrival
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.arrival?.scheduled &&
+                            flightData[0]?.arrival?.timezone
+                              ? new Intl.DateTimeFormat("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  timeZone: flightData[0]?.arrival?.timezone,
+                                  timeZoneName: "short",
+                                  hour12: false,
+                                }).format(
+                                  new Date(flightData[0]?.arrival?.scheduled)
+                                )
+                              : "Time not available"}
+                          </dd>
+                        </div>
                       </div>
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          Arrival
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.arrivalTime}
-                        </dd>
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          Terminal
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.terminal}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-sm font-medium text-neutral-500">
-                          Gate
-                        </dt>
-                        <dd className="mt-1 text-lg text-neutral-900">
-                          {flightDetails.gate}
-                        </dd>
-                      </div>
-                    </div>
-                  </dl>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            DEP-Terminal
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.departure?.terminal ||
+                              " Terminal not found"}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            DEP-Gate
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.departure?.gate ||
+                              " dep-Gate not found"}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            Journey duration
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flight_duration()}
+                          </dd>
+                        </div>
 
-                  {!showJoinForm && (
-                    <motion.button
-                      onClick={() => setShowJoinForm(true)}
-                      className="mt-6 w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Join This Flight
-                    </motion.button>
+                        <div>
+                          <dt className="text-sm font-medium text-neutral-700">
+                            Flight Status
+                          </dt>
+                          <dd className="mt-1 text-lg text-neutral-900">
+                            {flightData[0]?.flight_status ||
+                              "status unavailable"}
+                          </dd>
+                        </div>
+                      </div>
+                    </dl>
+                  ) : (
+                    <p>Loading flight details...</p>
                   )}
-
-                  {showJoinForm && (
-                    <motion.form
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-6 space-y-4"
-                      onSubmit={handleSubmit}
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Name
-                          </label>
-                          <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Age
-                          </label>
-                          <input
-                            type="number"
-                            name="age"
-                            value={formData.age}
-                            onChange={handleInputChange}
-                            min="18"
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Languages
-                          </label>
-                          <input
-                            type="text"
-                            name="languages"
-                            value={formData.languages}
-                            onChange={handleInputChange}
-                            placeholder="English, French"
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Country
-                          </label>
-                          <input
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Email
-                          </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            Seat Number
-                          </label>
-                          <input
-                            type="text"
-                            name="seatNumber"
-                            value={formData.seatNumber}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700">
-                            I am a
-                          </label>
-                          <select
-                            name="type"
-                            value={formData.type}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                            required
-                          >
-                            <option value="helper">Helper</option>
-                            <option value="seeker">Help Seeker</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700">
-                          Description (max 100 words)
-                        </label>
-                        <textarea
-                          name="description"
-                          value={formData.description}
-                          onChange={handleInputChange}
-                          rows={3}
-                          className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                          maxLength={500}
-                        />
-                        <p className="mt-1 text-sm text-neutral-500">
-                          {formData.description.split(" ").length}/100 words
-                        </p>
-                      </div>
-
-                      {formData.type === "helper" && (
-                        <div className="space-y-4">
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              name="isPaidHelper"
-                              checked={formData.isPaidHelper}
-                              onChange={handleInputChange}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-                            />
-                            <label className="ml-2 block text-sm text-neutral-700">
-                              I am a paid helper
-                            </label>
-                          </div>
-
-                          {formData.isPaidHelper && (
-                            <div>
-                              <label className="block text-sm font-medium text-neutral-700">
-                                Helper Price ($)
-                              </label>
-                              <input
-                                type="number"
-                                name="helperPrice"
-                                value={formData.helperPrice}
-                                onChange={handleInputChange}
-                                min="0"
-                                className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                                required
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="flex space-x-3">
-                        <motion.button
-                          type="submit"
-                          className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          Join Flight
-                        </motion.button>
-                        <motion.button
-                          type="button"
-                          onClick={() => setShowJoinForm(false)}
-                          className="px-4 py-2 border border-neutral-300 rounded-md hover:bg-neutral-50"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          Cancel
-                        </motion.button>
-                      </div>
-                    </motion.form>
-                  )}
+                  <Helpfrom flight_Date={flightData[0]?.flight_date} flight_iata={flightData[0]?.flight.iata} />
                 </div>
               </div>
               <Flightcompanioncard />

@@ -28,18 +28,28 @@ export async function fetchFlightsByRouteAndDate(req, res) {
 
 export async function fetchflightby_iata_and_Date(req, res) {
   try {
-    const { flight_iata, flight_date } = req.params;
-    console.log(flight_iata, flight_date);
+    const { iata, date } = req.params;
 
-    if (!flight_iata) {
+    console.log(iata, date);
+
+    if (!iata || iata === "undefined" || iata === "null") {
       return res.status(400).json({ error: "flight_iata is required" });
     }
 
-    const data = await getflightby_iata_and_Date(flight_iata, flight_date);
-    console.log("📦 Controller - response of Data:", data);
-    res.json(data);
+    const data = await getflightby_iata_and_Date(iata, date);
+    //console.log("📦 Controller - response of Data:", data);
+
+    const filteredData = data.filter(
+      (flight) => flight.flight_date === date && flight.flight.iata === iata
+    );
+
+   // console.log("📦 filter Controller - response of Data:", filteredData);
+
+    res.json(filteredData);
   } catch (error) {
-    console.error("surya we got error Error fetching flights:", error);
-    res.status(500).json({ error: "surya Failed to fetch flights" });
+    console.error(" we got error Error fetching flights:", error);
+    res
+      .status(500)
+      .json({ error: " Failed to fetch flights with iata and date" });
   }
 }
