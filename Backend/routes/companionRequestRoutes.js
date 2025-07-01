@@ -6,6 +6,10 @@ const router = express.Router();
 // Create a companion request
 router.post("/", async (req, res) => {
   try {
+    console.log(
+      "🚀 ~ file: companionRequestRoutes.js:18 ~ router.post ~ req.body:",
+      req.body
+    );
     const companionRequest = new CompanionRequest(req.body);
     await companionRequest.save();
     res.status(201).json(companionRequest);

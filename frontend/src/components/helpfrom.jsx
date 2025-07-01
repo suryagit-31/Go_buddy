@@ -8,12 +8,13 @@ import useFlightStore from "../store/useflightstore";
 const Helpfrom = ({ flight_iata, flight_Date }) => {
   const { user } = useAuth();
   const [showJoinForm, setShowJoinForm] = useState(false);
+  const { joinFlightasCompanion } = useFlightStore();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     age: "",
     languages: "",
-    phone: "",
-    type: "seeker",
+    phonenumber: "",
+    passenger_role: "seeker",
     country: "",
     email: "",
     seatNumber: "",
@@ -24,46 +25,7 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
     flight_date: flight_Date,
   });
 
-  const flightDetails = {
-    companions: [
-      {
-        id: "1",
-        name: "John Smith",
-        age: 65,
-        languages: ["English", "French"],
-        phone: "+1 234-567-8900",
-        type: "helper",
-        status: "booked",
-        country: "United States",
-        email: "john@example.com",
-        seatNumber: "12A",
-        description:
-          "Experienced traveler, happy to assist with luggage and navigation.",
-        isPaidHelper: true,
-        helperPrice: 50,
-        flight_iata: flight_iata,
-        flight_date: flight_Date,
-      },
-      {
-        id: "2",
-        name: "Maria Garcia",
-        age: 70,
-        languages: ["Spanish", "English"],
-        phone: "+1 234-567-8901",
-        type: "seeker",
-        status: "vacant",
-        country: "Spain",
-        email: "maria@example.com",
-        seatNumber: "14C",
-        description:
-          "First time traveling to Paris, would appreciate help with transfers.",
-        isPaidHelper: false,
-        helperPrice: "",
-        flight_iata: flight_iata,
-        flight_date: flight_Date,
-      },
-    ],
-  };
+  const flightDetails = {};
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
@@ -75,14 +37,39 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.description && formData.description.split(" ").length > 100) {
       alert("Description must not exceed 100 words");
       return;
     }
-    console.log("Joining flight with details:", formData);
-    setShowJoinForm(false);
+
+    const payload = {
+      name: formData.name,
+      age: Number(formData.age),
+      languages: formData.languages,
+      phonenumber: formData.phonenumber,
+      email: formData.email,
+      country: formData.country,
+      seatNumber: formData.seatNumber,
+      description: formData.description,
+      passenger_role: formData.passenger_role,
+      isPaidHelper: formData.isPaidHelper,
+      helperPrice: formData.helperPrice,
+      flightiata: formData.flight_iata,
+      flightdate: formData.flight_date,
+      userID: user?._id || "user31", // fallback or inject real ID
+    };
+    try {
+      await joinFlightasCompanion(payload);
+      alert("✅ Successfully joined the flight!");
+      setShowJoinForm(false);
+    } catch (error) {
+      alert("❌ Failed to join flight. Please try again later.");
+    } finally {
+      setShowJoinForm(false);
+      console.log("Joining flight with details:", formData);
+    }
   };
 
   return (
@@ -111,11 +98,17 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
                 Flight Date
               </label>
               <input
-                type="text"
+                type="date"
                 name="flight_date"
                 value={flight_Date}
-                placeholder={flight_Date}
-                className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder={
+                  typeof flight_Date === "string"
+                    ? flight_Date
+                    : flight_Date instanceof Date
+                    ? flight_Date.toISOString().split("T")[0]
+                    : ""
+                }
+                className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 capitalize"
                 readOnly
               />
             </div>
@@ -128,7 +121,7 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
                 type="text"
                 name="flight_iata"
                 value={flight_iata}
-                placeholder={flight_iata}
+                placeholder={flight_iata || "IATA not found"}
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
                 readOnly
               />
@@ -187,8 +180,8 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="phonenumber"
+                value={formData.phonenumber}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
                 required
@@ -243,11 +236,11 @@ const Helpfrom = ({ flight_iata, flight_Date }) => {
                 I am a
               </label>
               <select
-                name="type"
-                value={formData.type}
+                name="passenger_role"
+                value={formData.passenger_role}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2"
-                required 
+                required
               >
                 <option value="helper">Helper</option>
                 <option value="seeker">Help Seeker</option>

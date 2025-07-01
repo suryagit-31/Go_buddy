@@ -4,12 +4,22 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import PageTransition from "../components/pagetransition.jsx";
 import { useAuth } from "../context/authcontext.jsx";
+import { EyeOff, Eye } from "lucide-react";
 
 const SignupPage = () => {
-  const { signup } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formdata, setformdata] = useState({
+    Fullname: "",
+    email: "",
+    phonenumber: "",
+    age: "",
+    password: "",
+    confirmpassword: "",
+  });
 
   const {
     register,
@@ -17,14 +27,13 @@ const SignupPage = () => {
     watch,
     formState: { errors },
   } = useForm();
+
   const password = watch("password");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
-
     try {
-      await signup(data.name, data.email, data.password);
       navigate("/");
     } catch (err) {
       setError("Failed to create an account. Please try again.");
@@ -65,6 +74,7 @@ const SignupPage = () => {
             )}
 
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              {/* Full Name */}
               <div>
                 <label
                   htmlFor="name"
@@ -77,6 +87,12 @@ const SignupPage = () => {
                     id="name"
                     type="text"
                     autoComplete="name"
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        Fullname: e.target.value,
+                      });
+                    }}
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.name ? "border-error-500" : "border-neutral-300"
                     } rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-base`}
@@ -90,6 +106,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
+              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -102,6 +119,12 @@ const SignupPage = () => {
                     id="email"
                     type="email"
                     autoComplete="email"
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        email: e.target.value,
+                      });
+                    }}
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.email ? "border-error-500" : "border-neutral-300"
                     } rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-base`}
@@ -121,6 +144,41 @@ const SignupPage = () => {
                 </div>
               </div>
 
+              {/* Phone */}
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-neutral-700"
+                >
+                  Phone number
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        phonenumber: e.target.value,
+                      });
+                    }}
+                    className={`appearance-none block w-full px-3 py-3 border ${
+                      errors.phone ? "border-error-500" : "border-neutral-300"
+                    } rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-base`}
+                    {...register("phone", {
+                      required: "Phone number is required",
+                    })}
+                  />
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-error-600">
+                      {errors.phone.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Age */}
               <div>
                 <label
                   htmlFor="age"
@@ -132,6 +190,13 @@ const SignupPage = () => {
                   <input
                     id="age"
                     type="number"
+                    autoComplete="age"
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        age: e.target.value,
+                      });
+                    }}
                     min="18"
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.age ? "border-error-500" : "border-neutral-300"
@@ -152,6 +217,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
+              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
@@ -159,11 +225,17 @@ const SignupPage = () => {
                 >
                   Password
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 relative">
                   <input
                     id="password"
-                    type="password"
-                    autoComplete="new-password"
+                    type={showPassword ? "text" : "password"}
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        password: e.target.value,
+                      });
+                    }}
+                    autoComplete="off"
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.password
                         ? "border-error-500"
@@ -177,6 +249,18 @@ const SignupPage = () => {
                       },
                     })}
                   />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-base-content/40 opacity-30" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-base-content/40 opacity-30 " />
+                    )}
+                  </button>
                   {errors.password && (
                     <p className="mt-1 text-sm text-error-600">
                       {errors.password.message}
@@ -185,6 +269,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
+              {/* Confirm Password */}
               <div>
                 <label
                   htmlFor="confirmPassword"
@@ -196,6 +281,13 @@ const SignupPage = () => {
                   <input
                     id="confirmPassword"
                     type="password"
+                    autoComplete="off"
+                    onChange={(e) => {
+                      setformdata({
+                        ...formdata,
+                        confirmPassword: e.target.value,
+                      });
+                    }}
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.confirmPassword
                         ? "border-error-500"
@@ -215,6 +307,7 @@ const SignupPage = () => {
                 </div>
               </div>
 
+              {/* Terms */}
               <div className="flex items-center">
                 <input
                   id="terms"
@@ -244,6 +337,7 @@ const SignupPage = () => {
                 </label>
               </div>
 
+              {/* Submit Button */}
               <div>
                 <motion.button
                   type="submit"

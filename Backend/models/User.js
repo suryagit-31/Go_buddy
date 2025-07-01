@@ -1,17 +1,47 @@
 import mongoose from "mongoose";
+import validator from "validator";
 
 const userSchema = new mongoose.Schema(
   {
-    name: String,
-    role: String, // traveler or family
-    age: Number,
-    phone: String,
-    email: String,
-    language: String,
-    location: String,
-    profileImage: String,
-    createdBy: mongoose.Types.ObjectId,
-    verified: Boolean,
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is invalid");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      minLength: 7,
+      trim: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+      min: 18,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+    city: String,
+    languages: [String],
+    bio: String,
+    emergencyContact: {
+      name: String,
+      phone: String,
+    },
+    medicalConditions: String,
   },
   { timestamps: true }
 );

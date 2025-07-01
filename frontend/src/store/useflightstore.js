@@ -11,7 +11,7 @@ const useFlightStore = create((set) => ({
     try {
       set({ isloadingflights: true });
       const response = await axiosInstance.post("/flights", data);
-    //  console.log("response", response);
+      //  console.log("response", response);
       set({ available_flights: [...response.data], isloadingflights: false });
     } catch (error) {
       console.log("Error fetching flights in your input :", error);
@@ -32,7 +32,7 @@ const useFlightStore = create((set) => ({
       const response = await axiosInstance.get(
         `/flights/flightjoin/${iata}/${date}`
       );
-     console.log("response", response.data);
+      console.log("response", response.data);
       set({ join_flight: response.data });
       set({ is_joiningflight: false });
     } catch (error) {
@@ -42,6 +42,16 @@ const useFlightStore = create((set) => ({
       } else {
         console.log("something went wrong");
       }
+    }
+  },
+  joinFlightasCompanion: async (formData) => {
+    try {
+      console.log(formData);
+      const response = await axiosInstance.post("/companions", formData);
+      console.log("✅ Companion saved to DB:", response);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error saving to DB:", error);
     }
   },
 }));
