@@ -2,24 +2,22 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./libs/connect.js";
-
-// user routes
 import userRoutes from "./routes/userRoutes.js";
 import companionRequestRoutes from "./routes/companionRequestRoutes.js";
 import errorHandler from "./utils/errorHandler.js";
 import flightroutes from "./routes/flightRoutes.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 //const allowedOrigins = ["http://localhost:3001", "http://localhost:3000"];
-
-
+app.use(express.json({ limit: "10mb" }));
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = ["http://localhost:3001", "http://localhost:3000"];
+      const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -30,11 +28,10 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+console.log("Allowed origins:", process.env.ALLOWED_ORIGINS);
+app.use(cookieParser());
 
-
-app.use(express.json());
-
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/companions", companionRequestRoutes);
 app.use("/api/flights", flightroutes);
 app.use(errorHandler);

@@ -1,27 +1,17 @@
 import express from "express";
-import User from "../models/User.js";
-
+import {
+  signup,
+  check_Auth,
+  logout,
+  login,
+  updateProfile,
+} from "../controllers/authcontroller.js";
+import { protected_Route } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
-// Create a new user
-router.post("/", async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get all users
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
+router.post("/signup", signup);
+router.post("/logout", logout);
+router.post("/login", login);
+router.get("/check", protected_Route, check_Auth);
+router.put("/updateprofile", protected_Route, updateProfile);
 export default router;

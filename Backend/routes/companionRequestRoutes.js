@@ -1,39 +1,12 @@
 import express from "express";
-import CompanionRequest from "../models/CompanionRequest.js";
+import CompanionRequest from "../models/CompanionRequest.model.js";
+import { createCompanion , getOtherCompanions} from "../controllers/companioncontroller.js";
 
 const router = express.Router();
 
 // Create a companion request
-router.post("/", async (req, res) => {
-  try {
-    console.log(
-      "🚀 ~ file: companionRequestRoutes.js:18 ~ router.post ~ req.body:",
-      req.body
-    );
-    const companionRequest = new CompanionRequest(req.body);
-    await companionRequest.save();
-    res.status(201).json(companionRequest);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get companion requests (optional: filter by flightId or userId)
-router.get("/", async (req, res) => {
-  try {
-    const filter = {};
-    if (req.query.flightId) filter.flightId = req.query.flightId;
-    if (req.query.userId) filter.userId = req.query.userId;
-
-    const companionRequests = await CompanionRequest.find(filter)
-      .populate("flightId")
-      .populate("userId");
-
-    res.json(companionRequests);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post("/", createCompanion);
+router.get("/:flight_iata/:flight_date", getOtherCompanions);
 
 // Update request status (accept or decline)
 router.patch("/:id", async (req, res) => {

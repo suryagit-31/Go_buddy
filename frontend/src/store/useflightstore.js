@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import axiosInstance from "../utils/axios";
+import toast from "react-hot-toast";
 
-const useFlightStore = create((set) => ({
+const useFlightStore = create((set, get) => ({
   available_flights: [],
   isloadingflights: false,
   join_flight: null,
   is_joiningflight: false,
+  OtherCompanions: [],
 
   fetchFlights: async (data) => {
     try {
@@ -46,12 +48,27 @@ const useFlightStore = create((set) => ({
   },
   joinFlightasCompanion: async (formData) => {
     try {
-      console.log(formData);
       const response = await axiosInstance.post("/companions", formData);
-      console.log("✅ Companion saved to DB:", response);
+      toast.success("joined as companion in", formData.flight_iata);
       return response.data;
     } catch (error) {
-      console.error("❌ Error saving to DB:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  },
+
+  get_OtherCompanions: async (flight_iata, flight_date) => {
+    console.log(flight_iata, flight_date);
+    try {
+      const response = await axiosInstance.get(
+        `/companions/${flight_iata}/${flight_date}`
+      );
+      console.log("response", response.data);
+      set({ OtherCompanions: response.data });
+      console.log("OtherCompanions", get().OtherCompanions);
+
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
     }
   },
 }));

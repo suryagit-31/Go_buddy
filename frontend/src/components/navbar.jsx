@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Plane } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth } from "../context/authcontext.jsx";
+import useAuthStore from "../store/useAuthstore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { is_userlogged, Logout } = useAuthStore();
   const location = useLocation();
 
   const toggleMenu = () => {
@@ -55,7 +55,7 @@ const Navbar = () => {
             >
               About Us
             </Link>
-            {isAuthenticated ? (
+            {is_userlogged ? (
               <>
                 <Link
                   to="/search"
@@ -88,7 +88,7 @@ const Navbar = () => {
                   Profile
                 </Link>
                 <button
-                  onClick={logout}
+                  onClick={Logout}
                   className="px-3 py-2 text-sm font-medium text-neutral-600 hover:text-primary-500"
                 >
                   Logout
@@ -167,7 +167,7 @@ const Navbar = () => {
             >
               About Us
             </Link>
-            {isAuthenticated ? (
+            {is_userlogged ? (
               <>
                 <Link
                   to="/search"
@@ -204,7 +204,7 @@ const Navbar = () => {
                 </Link>
                 <button
                   onClick={() => {
-                    logout();
+                    Logout();
                     closeMenu();
                   }}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-primary-500"

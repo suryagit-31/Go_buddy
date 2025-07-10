@@ -20,19 +20,20 @@ import Helpfrom from "../components/helpfrom";
 const FlightJoinpage = () => {
   const { iata, date } = useParams();
   const [flightData, setFlightData] = useState([]);
-  const { join_flight, get_joinflight, is_joiningflight } = useFlightStore();
+  const { join_flight, get_joinflight, get_OtherCompanions } = useFlightStore();
 
   useEffect(() => {
+    if (!iata || !date) return;
     const fetchData = async () => {
       await get_joinflight(iata, date);
     };
     fetchData();
+    get_OtherCompanions(iata, date);
   }, [iata, date]);
 
   useEffect(() => {
     if (join_flight) {
       setFlightData(join_flight); // Set the flight data once `join_flight` has been updated
-      console.log("Flight data:", join_flight); // Log the updated data
     }
   }, [join_flight]);
 
@@ -188,7 +189,10 @@ const FlightJoinpage = () => {
                   ) : (
                     <p>Loading flight details...</p>
                   )}
-                  <Helpfrom flight_Date={flightData[0]?.flight_date} flight_iata={flightData[0]?.flight.iata} />
+                  <Helpfrom
+                    flight_Date={flightData[0]?.flight_date}
+                    flight_iata={flightData[0]?.flight.iata}
+                  />
                 </div>
               </div>
               <Flightcompanioncard />

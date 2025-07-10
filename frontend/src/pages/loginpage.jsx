@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import PageTransition from "../components/pagetransition.jsx";
-import { useAuth } from "../context/authcontext.jsx";
-
+import useAuthStore from "../store/useAuthstore.js";
+import { EyeOff, Eye } from "lucide-react";
 const LoginPage = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
+  const { Login } = useAuthStore();
 
   const {
     register,
@@ -20,10 +20,8 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
-
     try {
-      await login(data.email, data.password);
-      navigate("/");
+      await Login(data);
     } catch (err) {
       setError("Invalid email or password");
     } finally {
@@ -101,10 +99,10 @@ const LoginPage = () => {
                 >
                   Password
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 relative">
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     className={`appearance-none block w-full px-3 py-3 border ${
                       errors.password
@@ -120,6 +118,18 @@ const LoginPage = () => {
                       {errors.password.message}
                     </p>
                   )}
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-base-content/40 opacity-30" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-base-content/40 opacity-30" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -129,7 +139,7 @@ const LoginPage = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
+                    className="h-4 w-4 accent-primary-600 focus:ring-blue-500 border-neutral-300 rounded"
                   />
                   <label
                     htmlFor="remember-me"
