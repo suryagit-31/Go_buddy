@@ -2,6 +2,9 @@ import { create } from "zustand";
 import axiosInstance from "../utils/axios";
 import { toast } from "react-hot-toast";
 
+const Base_backendUrl =
+  import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
+
 const useAuthStore = create((set) => ({
   authUser: null,
   is_signingup: false,
@@ -9,9 +12,7 @@ const useAuthStore = create((set) => ({
   is_userlogged: false,
   is_updatingprofile: false,
   ischeckingAuth: true,
-
   setIsUpdatingProfile: (value) => set({ is_updatingprofile: value }),
-
   checkAuth_validity: async () => {
     try {
       set({ ischeckingAuth: true });

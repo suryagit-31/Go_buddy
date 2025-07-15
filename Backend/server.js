@@ -7,12 +7,12 @@ import companionRequestRoutes from "./routes/companionRequestRoutes.js";
 import errorHandler from "./utils/errorHandler.js";
 import flightroutes from "./routes/flightRoutes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-//const allowedOrigins = ["http://localhost:3001", "http://localhost:3000"];
 app.use(express.json({ limit: "10mb" }));
 app.use(
   cors({
@@ -35,6 +35,13 @@ app.use("/api/user", userRoutes);
 app.use("/api/companions", companionRequestRoutes);
 app.use("/api/flights", flightroutes);
 app.use(errorHandler);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 connectDB()
   .then(() => {
