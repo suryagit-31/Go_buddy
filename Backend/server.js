@@ -36,7 +36,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-console.log("Allowed origins:", process.env.ALLOWED_ORIGINS);
 app.use(cookieParser());
 
 app.use("/api/user", userRoutes);
