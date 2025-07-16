@@ -22,7 +22,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+      const allowedOrigins = [
+        "https://go-buddy-1-3scd.onrender.com",
+        "http://localhost:3000",
+      ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
