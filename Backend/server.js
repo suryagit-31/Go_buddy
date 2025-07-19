@@ -23,8 +23,9 @@ app.use(
   cors({
     origin: function (origin, callback) {
       const allowedOrigins = [
-        "https://go-buddy-1.onrender.com",
+        "https://go-buddy-1-3scd.onrender.com",
         "http://localhost:3000",
+        "http://localhost:3001",
       ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);

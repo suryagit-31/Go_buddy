@@ -26,19 +26,5 @@ router.get("/flight/:flightId", async (req, res, next) => {
 
 router.get("/:flight_iata/:flight_date", getOtherCompanions);
 
-// Update request status (accept or decline)
-router.patch("/:id", async (req, res) => {
-  try {
-    const { status } = req.body;
-    const companionRequest = await CompanionRequest.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
-    res.json(companionRequest);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 export default router;
