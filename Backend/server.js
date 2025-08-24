@@ -18,12 +18,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrgins = [
+  "http://localhost:3000", // for dev
+  "http://localhost:3001", // for dev
+  "https://go-buddy-alpha.vercel.app", // your vercel frontend
+];
+
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin || allowedOrgins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(cookieParser());
