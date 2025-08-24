@@ -18,38 +18,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 app.use(
   cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = [
-        "https://go-buddy-1-3scd.onrender.com",
-        "http://localhost:3000",
-        "http://localhost:3001",
-      ];
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(cookieParser());
 
-app.use("/api/user", userRoutes);
-app.use("/api/companions", companionRequestRoutes);
-app.use("/api/flights", flightroutes);
-app.use(errorHandler);
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
+try {
+  app.use("/user", userRoutes);
+  app.use("/companions", companionRequestRoutes);
+  app.use("/flights", flightroutes);
+  console.log("✅ All routes loaded");
+} catch (err) {
+  console.error("❌ Route mounting error:", err);
 }
+app.use(errorHandler);
 
 connectDB()
   .then(() => {

@@ -8,6 +8,7 @@ const useFlightStore = create((set, get) => ({
   join_flight: null,
   is_joiningflight: false,
   OtherCompanions: [],
+  MyBookings: [],
 
   fetchFlights: async (data) => {
     try {
@@ -67,6 +68,17 @@ const useFlightStore = create((set, get) => ({
       console.log("OtherCompanions", get().OtherCompanions);
 
       return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  },
+
+  Get_Mybookings: async (data) => {
+    const UserMail = data;
+    try {
+      const response = await axiosInstance.get(`/companions/${UserMail}`);
+      console.log("response", response.data);
+      set({ MyBookings: response.data });
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }

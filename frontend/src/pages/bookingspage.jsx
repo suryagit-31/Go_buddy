@@ -1,26 +1,34 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState, useCallback } from "react";
 import PageTransition from "../components/pagetransition";
 import { motion } from "framer-motion";
-import { Plane, Calendar, User, X } from "lucide-react";
+import { Plane, Calendar, User, X, Hash, Phone } from "lucide-react";
+import useAuthStore from "../store/useAuthstore";
+import useFlightStore from "../store/useflightstore";
 
 // Mock data
-const mockBookings = [
-  {
-    id: "1",
-    flightNumber: "DL 114",
-    from: "New York",
-    to: "Paris",
-    date: "May 20, 2025",
-    companion: "Annette Black",
-  },
-];
 
 const BookingsPage = () => {
-  const [bookings, setBookings] = useState(mockBookings);
+  const [bookings, setBookings] = useState([]);
+  const { authUser } = useAuthStore();
+  const { Get_Mybookings, MyBookings } = useFlightStore();
 
   const handleCancelBooking = (bookingId) => {
-    setBookings(bookings.filter((booking) => booking.id !== bookingId));
+    setBookings((prev) => prev.filter((booking) => booking.id !== bookingId));
   };
+
+  const fetchUserBookings = useCallback(async () => {
+    if (!authUser?.email) return;
+    try {
+      Get_Mybookings(authUser.email);
+      if (MyBookings) setBookings(MyBookings);
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+    }
+  }, [authUser?.email, Get_Mybookings]);
+
+  useEffect(() => {
+    fetchUserBookings();
+  }, [fetchUserBookings]);
 
   return (
     <PageTransition>
@@ -50,7 +58,7 @@ const BookingsPage = () => {
             <div className="grid grid-cols-1 gap-4">
               {bookings.map((booking) => (
                 <motion.div
-                  key={booking.id}
+                  key={booking._id}
                   className="bg-white shadow-soft rounded-lg overflow-hidden"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -63,11 +71,11 @@ const BookingsPage = () => {
                       <div className="flex items-center space-x-3">
                         <Plane className="h-6 w-6 text-primary-600" />
                         <h3 className="text-lg font-semibold text-neutral-900">
-                          {booking.flightNumber}
+                          {booking.flight_iata}
                         </h3>
                       </div>
                       <motion.button
-                        onClick={() => handleCancelBooking(booking.id)}
+                        onClick={() => handleCancelBooking(booking._id)}
                         className="p-1 text-neutral-400 hover:text-error-600 focus:outline-none"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
@@ -76,73 +84,56 @@ const BookingsPage = () => {
                       </motion.button>
                     </div>
 
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <div className="flex items-center">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-neutral-500">
-                              From
-                            </p>
-                            <p className="text-base text-neutral-900">
-                              {booking.from}
-                            </p>
-                          </div>
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Flight Date */}
+                      <div className="flex items-center">
+                        <Calendar className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Flight Date
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {new Date(booking.flight_date).toDateString()}
+                          </p>
                         </div>
                       </div>
 
-                      <div>
-                        <div className="flex items-center">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-neutral-500">
-                              To
-                            </p>
-                            <p className="text-base text-neutral-900">
-                              {booking.to}
-                            </p>
-                          </div>
+                      {/* Seat Number */}
+                      <div className="flex items-center">
+                        <Hash className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Seat Number
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {booking.seatNumber || "Not Assigned"}
+                          </p>
                         </div>
                       </div>
 
-                      <div>
-                        <div className="flex items-center">
-                          <Calendar className="h-5 w-5 text-neutral-400 mr-2" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-neutral-500">
-                              Date
-                            </p>
-                            <p className="text-base text-neutral-900">
-                              {booking.date}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-6 border-t border-neutral-200">
+                      {/* Passenger Name */}
                       <div className="flex items-center">
                         <User className="h-5 w-5 text-neutral-400 mr-2" />
-                        <div className="min-w-0 flex-1">
+                        <div>
                           <p className="text-sm font-medium text-neutral-500">
-                            Travel Companion
+                            Passenger Name
                           </p>
-                          {booking.companion ? (
-                            <p className="text-base text-neutral-900">
-                              {booking.companion}
-                            </p>
-                          ) : (
-                            <div className="flex items-center mt-1">
-                              <p className="text-sm text-neutral-600">
-                                No companion yet
-                              </p>
-                              <motion.button
-                                className="ml-4 px-3 py-1 text-xs font-medium rounded-md text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                Find a Companion
-                              </motion.button>
-                            </div>
-                          )}
+                          <p className="text-base text-neutral-900">
+                            {booking.name}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Phone Number */}
+                      <div className="flex items-center">
+                        <Phone className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Phone Number
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {booking.phonenumber}
+                          </p>
                         </div>
                       </div>
                     </div>

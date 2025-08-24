@@ -28,12 +28,21 @@ export async function fetchFlightsByRouteAndDate(req, res) {
 
 export async function fetchflightby_iata_and_Date(req, res) {
   try {
-    const { iata, date } = req.params;
+   // const { iata, date } = req.params;
 
     console.log(iata, date);
 
     if (!iata || iata === "undefined" || iata === "null") {
       return res.status(400).json({ error: "flight_iata is required" });
+    }
+
+    if (!date || date === "undefined" || date === "null") {
+      return res.status(400).json({ error: "flight_date is required" });
+    }
+
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return res.status(400).json({ error: "Invalid date format" });
     }
 
     const data = await getflightby_iata_and_Date(iata, date);
@@ -43,7 +52,7 @@ export async function fetchflightby_iata_and_Date(req, res) {
       (flight) => flight.flight_date === date && flight.flight.iata === iata
     );
 
-   // console.log("📦 filter Controller - response of Data:", filteredData);
+    // console.log("📦 filter Controller - response of Data:", filteredData);
 
     res.json(filteredData);
   } catch (error) {

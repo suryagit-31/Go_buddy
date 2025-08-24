@@ -42,3 +42,19 @@ export const getOtherCompanions = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getUserBookings = async (req, res) => {
+  const { UserMail } = req.params;
+  console.log(UserMail);
+  try {
+    const [helpers, seekers] = await Promise.all([
+      HelperRequest.find({ email: UserMail }),
+      HelpSeekerRequest.find({ email: UserMail }),
+    ]);
+    const allBookings = [...helpers, ...seekers];
+
+    res.status(200).json(allBookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

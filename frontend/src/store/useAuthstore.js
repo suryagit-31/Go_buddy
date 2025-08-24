@@ -2,9 +2,6 @@ import { create } from "zustand";
 import axiosInstance from "../utils/axios";
 import { toast } from "react-hot-toast";
 
-const Base_backendUrl =
-  import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
-
 const useAuthStore = create((set) => ({
   authUser: null,
   is_signingup: false,
@@ -29,6 +26,7 @@ const useAuthStore = create((set) => ({
     set({ is_signingup: true });
     try {
       const res = await axiosInstance.post("/user/signup", data);
+
       set({ authUser: res.data, is_signingup: false, is_userlogged: true });
     } catch (error) {
       console.error("Signup failed:", error);
@@ -43,6 +41,7 @@ const useAuthStore = create((set) => ({
     set({ is_loggingin: true });
     try {
       const res = await axiosInstance.post("/user/login", data);
+      console.log(res);
       console.log(res.data.createdAt);
       set({ authUser: res.data, is_loggingin: false, is_userlogged: true });
     } catch (error) {
