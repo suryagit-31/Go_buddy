@@ -13,7 +13,9 @@ const useAuthStore = create((set) => ({
   checkAuth_validity: async () => {
     try {
       set({ ischeckingAuth: true });
-      const res = await axiosInstance.get("/user/check");
+      const res = await axiosInstance.get(
+        "https://go-buddy-2.onrender.com/user/check"
+      );
       set({ authUser: res.data, ischeckingAuth: false, is_userlogged: true });
     } catch (error) {
       set({ authUser: null });
@@ -25,7 +27,10 @@ const useAuthStore = create((set) => ({
   Signup: async (data) => {
     set({ is_signingup: true });
     try {
-      const res = await axiosInstance.post("/user/signup", data);
+      const res = await axiosInstance.post(
+        "https://go-buddy-2.onrender.com/user/signup",
+        data
+      );
 
       set({ authUser: res.data, is_signingup: false, is_userlogged: true });
     } catch (error) {
@@ -40,7 +45,10 @@ const useAuthStore = create((set) => ({
   Login: async (data) => {
     set({ is_loggingin: true });
     try {
-      const res = await axiosInstance.post("/user/login", data);
+      const res = await axiosInstance.post(
+        "https://go-buddy-2.onrender.com/user/login",
+        data
+      );
       console.log(res);
       console.log(res.data.createdAt);
       set({ authUser: res.data, is_loggingin: false, is_userlogged: true });
@@ -55,7 +63,10 @@ const useAuthStore = create((set) => ({
     set({ is_updatingprofile: true });
     console.log(data);
     try {
-      const res = await axiosInstance.put("/user/updateprofile", data);
+      const res = await axiosInstance.put(
+        "https://go-buddy-2.onrender.com/user/updateprofile",
+        data
+      );
       set({
         authUser: res.data,
         is_updatingprofile: false,
@@ -72,7 +83,9 @@ const useAuthStore = create((set) => ({
 
   Logout: async () => {
     try {
-      const res = await axiosInstance.post("/user/logout");
+      const res = await axiosInstance.post(
+        "https://go-buddy-2.onrender.com/user/logout"
+      );
       set({ authUser: null });
       set({ is_userlogged: false });
       toast.success(res.data.message);
