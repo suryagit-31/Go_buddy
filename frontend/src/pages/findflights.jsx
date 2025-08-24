@@ -17,10 +17,10 @@ const FlightSearchPage = () => {
     useFlightStore();
 
   const handleJoinFlight = async (iata, date) => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
+   // if (!isAuthenticated) {
+  //  navigate("/login");
+    //  return;
+    //}
     // Encode the date to make it URL-safe (important!)
     const encodedDate = encodeURIComponent(date);
     navigate(`/flightjoin/${iata}/${encodedDate}`);
