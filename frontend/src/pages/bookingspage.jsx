@@ -1,7 +1,7 @@
 import React, { use, useEffect, useState, useCallback } from "react";
 import PageTransition from "../components/pagetransition";
 import { motion } from "framer-motion";
-import { Plane, Calendar, User, X, Hash, Phone } from "lucide-react";
+import { Plane, Calendar, User, X, Hash,  DollarSign, Phone } from "lucide-react";
 import useAuthStore from "../store/useAuthstore";
 import useFlightStore from "../store/useflightstore";
 
