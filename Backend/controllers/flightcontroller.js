@@ -28,8 +28,7 @@ export async function fetchFlightsByRouteAndDate(req, res) {
 
 export async function fetchflightby_iata_and_Date(req, res) {
   try {
-   // const { iata, date } = req.params;
-
+    const { iata, date } = req.params;
     console.log(iata, date);
 
     if (!iata || iata === "undefined" || iata === "null") {
