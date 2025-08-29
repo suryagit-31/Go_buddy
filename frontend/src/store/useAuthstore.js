@@ -14,7 +14,7 @@ const useAuthStore = create((set) => ({
     try {
       set({ ischeckingAuth: true });
       const res = await axiosInstance.get(
-        "https://go-buddy-2.onrender.com/user/check"
+        "https://go-buddy-1-3scd.onrender.com/user/check"
       );
       set({ authUser: res.data, ischeckingAuth: false, is_userlogged: true });
     } catch (error) {
@@ -28,7 +28,7 @@ const useAuthStore = create((set) => ({
     set({ is_signingup: true });
     try {
       const res = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/user/signup",
+        "https://go-buddy-1-3scd.onrender.com/user/signup",
         data
       );
 
@@ -46,7 +46,7 @@ const useAuthStore = create((set) => ({
     set({ is_loggingin: true });
     try {
       const res = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/user/login",
+        "https://go-buddy-1-3scd.onrender.com/user/login",
         data
       );
       console.log(res);
@@ -64,7 +64,7 @@ const useAuthStore = create((set) => ({
     console.log(data);
     try {
       const res = await axiosInstance.put(
-        "https://go-buddy-2.onrender.com/user/updateprofile",
+        "https://go-buddy-1-3scd.onrender.com/user/updateprofile",
         data
       );
       set({
@@ -84,7 +84,7 @@ const useAuthStore = create((set) => ({
   Logout: async () => {
     try {
       const res = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/user/logout"
+        "https://go-buddy-1-3scd.onrender.com/user/logout"
       );
       set({ authUser: null });
       set({ is_userlogged: false });
