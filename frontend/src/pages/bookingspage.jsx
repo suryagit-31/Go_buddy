@@ -28,7 +28,7 @@ const BookingsPage = () => {
 
   useEffect(() => {
     fetchUserBookings();
-  }, [fetchUserBookings]);
+  }, [authUser?.email, Get_Mybookings]);
 
   return (
     <PageTransition>
@@ -110,6 +110,30 @@ const BookingsPage = () => {
                           </p>
                         </div>
                       </div>
+
+                      
+                      {/* Passenger Role */}
+                      <div className="flex items-center">
+                        <Hash className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Role
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {booking.passenger_role || "Not Assigned"}
+                          </p>
+
+                          {booking.passenger_role === "helper" && (
+                            <div className="flex items-center space-x-1 mt-1">
+                              <span className="text-base text-neutral-900 font-medium">
+                                Price: {booking.helperPrice ?? "Not Assigned"}
+                              </span>
+                              <DollarSign className="h-4 w-4 text-primary-600" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
 
                       {/* Passenger Name */}
                       <div className="flex items-center">
