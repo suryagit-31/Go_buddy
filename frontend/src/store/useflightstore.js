@@ -14,7 +14,7 @@ const useFlightStore = create((set, get) => ({
     try {
       set({ isloadingflights: true });
       const response = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/flights",
+        "https://go-buddy-1-3scd.onrender.com/flights",
         data
       );
       //  console.log("response", response);
@@ -36,7 +36,7 @@ const useFlightStore = create((set, get) => ({
       set({ is_joiningflight: true });
       //console.log("✈️ Calling flightjoin with:", iata, date);
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/flights/flightjoin/${iata}/${date}`
+        `https://go-buddy-1-3scd.onrender.com/flights/flightjoin/${iata}/${date}`
       );
       console.log("response", response.data);
       set({ join_flight: response.data });
@@ -53,7 +53,7 @@ const useFlightStore = create((set, get) => ({
   joinFlightasCompanion: async (formData) => {
     try {
       const response = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/companions",
+        "https://go-buddy-1-3scd.onrender.com/companions",
         formData
       );
       toast.success("joined as companion in", formData.flight_iata);
@@ -67,7 +67,7 @@ const useFlightStore = create((set, get) => ({
     console.log(flight_iata, flight_date);
     try {
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/companions/${flight_iata}/${flight_date}`
+        `https://go-buddy-1-3scd.onrender.com/companions/${flight_iata}/${flight_date}`
       );
       console.log("response", response.data);
       set({ OtherCompanions: response.data });
@@ -83,7 +83,7 @@ const useFlightStore = create((set, get) => ({
     const UserMail = data;
     try {
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/companions/${UserMail}`
+        `https://go-buddy-1-3scd.onrender.com/companions/${UserMail}`
       );
       console.log("response", response.data);
       set({ MyBookings: response.data });
