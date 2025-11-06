@@ -1,3 +1,4 @@
+import { truncates } from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const generate_token = async (user_id, res) => {
@@ -14,8 +15,8 @@ export const generate_token = async (user_id, res) => {
     expires: expirationDate,
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
     httpOnly: true, // Prevents JavaScript access (security)
-    secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // More permissive for development
+    secure: true, // Only send over HTTPS in production
+    sameSite: "none",
     path: "/", // Available across entire site
   });
 
