@@ -12,9 +12,6 @@ import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-// Get messages for a connection
-router.get("/:connectionId", protected_Route, getMessages);
-
 // Send text message
 router.post("/", protected_Route, sendMessage);
 
@@ -24,11 +21,13 @@ router.post("/upload", protected_Route, upload.single("file"), uploadFile);
 // Mark messages as read
 router.put("/read", protected_Route, markAsRead);
 
-// Search messages
-router.get("/search/:connectionId", protected_Route, searchMessages);
-
 // Get unread count
 router.get("/unread/count", protected_Route, getUnreadCount);
 
-export default router;
+// Search messages (must come before /:connectionId)
+router.get("/search/:connectionId", protected_Route, searchMessages);
 
+// Get messages for a connection (catch-all, must come last)
+router.get("/:connectionId", protected_Route, getMessages);
+
+export default router;

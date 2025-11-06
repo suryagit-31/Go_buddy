@@ -32,6 +32,7 @@ const allowedOrgins = [
   "http://localhost:3001",
   "http://localhost:5173", // for dev
   "https://go-buddy-2.vercel.app",
+  "https://go-buddy-alpha.vercel.app",
   "https://go-buddy-alpha.vercel.app", // your vercel frontend
 ];
 
@@ -63,24 +64,37 @@ const corsOptions = {
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly
-app.options("*", cors(corsOptions));
+// Handle preflight requests explicitly - use a more specific pattern
+app.options("/*", cors(corsOptions));
 
 app.use(cookieParser());
 
+// Mount routes with better error handling
 try {
+  console.log("Loading routes...");
   app.use("/user", userRoutes);
+  console.log("✅ User routes loaded");
   app.use("/companions", companionRequestRoutes);
+  console.log("✅ Companion routes loaded");
   app.use("/connections", connectionRoutes);
+  console.log("✅ Connection routes loaded");
   app.use("/messages", messageRoutes);
+  console.log("✅ Message routes loaded");
   app.use("/payments", paymentRoutes);
+  console.log("✅ Payment routes loaded");
   app.use("/subscriptions", subscriptionRoutes);
+  console.log("✅ Subscription routes loaded");
   app.use("/flights", flightroutes);
+  console.log("✅ Flight routes loaded");
   app.use("/housing", housingRoutes);
+  console.log("✅ Housing routes loaded");
   app.use("/notifications", notificationRoutes);
-  console.log("✅ All routes loaded");
+  console.log("✅ Notification routes loaded");
+  console.log("✅ All routes loaded successfully");
 } catch (err) {
   console.error("❌ Route mounting error:", err);
+  console.error("Error stack:", err.stack);
+  process.exit(1);
 }
 app.use(errorHandler);
 
