@@ -56,7 +56,7 @@ const allowedOrgins = [
   "https://go-buddy-2.vercel.app",
   "https://go-buddy-alpha.vercel.app",
   "https://go-buddy-alpha.vercel.app",
-  "https://go-buddy-9m84fm30n-suryadammalapas-projects.vercel.app/", // your vercel frontend
+  "https://go-buddy-9m84fm30n-suryadammalapas-projects.vercel.app", // your vercel frontend
 ];
 
 app.use(express.json());
