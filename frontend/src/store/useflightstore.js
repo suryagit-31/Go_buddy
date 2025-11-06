@@ -12,19 +12,25 @@ const useFlightStore = create((set, get) => ({
 
   fetchFlights: async (data) => {
     try {
-      set({ isloadingflights: true });
-      const response = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/flights",
-        data
-      );
-      //  console.log("response", response);
-      set({ available_flights: [...response.data], isloadingflights: false });
+      set({ isloadingflights: true, available_flights: [] });
+      const response = await axiosInstance.post("flights", data);
+      console.log("Flight response:", response.data);
+      // Ensure response.data is an array
+      const flights = Array.isArray(response.data) ? response.data : [];
+      set({ available_flights: flights, isloadingflights: false });
+      if (flights.length === 0) {
+        toast.info("No flights found for the selected route and date.");
+      }
     } catch (error) {
-      console.log("Error fetching flights in your input :", error);
-      if (error.response && error.response.status == 500) {
-        console.log("No flight data found for the given route and date.");
+      console.error("Error fetching flights:", error);
+      set({ available_flights: [], isloadingflights: false });
+      if (error.response && error.response.status === 500) {
+        toast.error("No flight data found for the given route and date.");
       } else {
-        console.log("something went wrong");
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to fetch flights. Please try again."
+        );
       }
     }
   },
@@ -34,9 +40,9 @@ const useFlightStore = create((set, get) => ({
   get_joinflight: async (iata, date) => {
     try {
       set({ is_joiningflight: true });
-      //console.log("✈️ Calling flightjoin with:", iata, date);
+      //   console.log("✈️ Calling flightjoin with:", iata, date);
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/flights/flightjoin/${iata}/${date}`
+        `flights/flightjoin/${iata}/${date}`
       );
       console.log("response", response.data);
       set({ join_flight: response.data });
@@ -52,10 +58,7 @@ const useFlightStore = create((set, get) => ({
   },
   joinFlightasCompanion: async (formData) => {
     try {
-      const response = await axiosInstance.post(
-        "https://go-buddy-2.onrender.com/companions",
-        formData
-      );
+      const response = await axiosInstance.post("/companions", formData);
       toast.success("joined as companion in", formData.flight_iata);
       return response.data;
     } catch (error) {
@@ -67,7 +70,7 @@ const useFlightStore = create((set, get) => ({
     console.log(flight_iata, flight_date);
     try {
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/companions/${flight_iata}/${flight_date}`
+        `/companions/by-flight/${flight_iata}/${flight_date}`
       );
       console.log("response", response.data);
       set({ OtherCompanions: response.data });
@@ -80,13 +83,26 @@ const useFlightStore = create((set, get) => ({
   },
 
   Get_Mybookings: async (data) => {
-    const UserMail = data;
+    const UserMail = encodeURIComponent(data);
     try {
       const response = await axiosInstance.get(
-        `https://go-buddy-2.onrender.com/companions/${UserMail}`
+        `/companions/by-user/${UserMail}`
       );
       console.log("response", response.data);
-      set({ MyBookings: response.data });
+      set({ MyBookings: Array.isArray(response.data) ? response.data : [] });
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      toast.error(error.response?.data?.message || error.message);
+      set({ MyBookings: [] });
+    }
+  },
+  cancelBooking: async (id) => {
+    try {
+      await axiosInstance.delete(`/companions/${id}`);
+      set({
+        MyBookings: get().MyBookings.filter((b) => b._id !== id),
+      });
+      toast.success("Booking cancelled");
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }

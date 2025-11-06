@@ -1,9 +1,13 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.model.js";
 import { generate_token } from "../libs/util.js";
+import {
+  uploadProfilePicture as uploadProfilePictureToCloudinary,
+  deleteFromCloudinary,
+  generateFileName,
+} from "../services/cloudinaryService.js";
 
 export const signup = async (req, res) => {
-  console.log(req.body);
   try {
     const { name, email, password, phone, age } = req.body;
     if (!name || !email || !password || !phone || !age) {
@@ -30,13 +34,8 @@ export const signup = async (req, res) => {
       role: "user",
     });
 
-    //  console.log(newuser_model);
-
-    if (newuser_model) {
-      await newuser_model.save();
-      generate_token(newuser_model._id, res);
-      // Call after saving the user
-    }
+    await newuser_model.save();
+    generate_token(newuser_model._id, res);
 
     return res.status(201).json({
       message: "user created successfully",
@@ -103,7 +102,6 @@ export const login = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  console.log(req.body);
   try {
     const {
       name,
@@ -120,29 +118,105 @@ export const updateProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
-    user.name = name || user.name;
-    user.phone = phone || user.phone;
-    user.age = age || user.age;
-    user.bio = bio || user.bio;
-    user.city = city || user.city;
-    user.languages = languages || user.languages;
-    user.medicalConditions = medicalConditions || user.medicalConditions;
-    user.emergencyContact.name = emergencyContact || user.emergencyContact;
-    user.emergencyContact.phone = emergencyPhone || user.emergencyPhone;
+
+    if (name !== undefined) user.name = name;
+    if (age !== undefined) user.age = age;
+    if (bio !== undefined) user.bio = bio;
+    if (city !== undefined) user.city = city;
+    if (languages !== undefined) user.languages = languages;
+    if (medicalConditions !== undefined)
+      user.medicalConditions = medicalConditions;
+    if (emergencyContact !== undefined)
+      user.emergencyContact.name = emergencyContact;
+    if (emergencyPhone !== undefined)
+      user.emergencyContact.phone = emergencyPhone;
+
     await user.save();
-    return res.status(200).json({ message: "profile updated successfully" });
+
+    const updatedUser = await User.findById(req.user._id).select("-password");
+    const userObject = updatedUser.toObject();
+
+    return res.status(200).json({
+      message: "profile updated successfully",
+      ...userObject,
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Error updating profile:", error);
+    console.error("Error stack:", error.stack);
+    return res.status(500).json({
+      message: "Error updating profile",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+// Upload profile picture
+export const uploadProfilePicture = async (req, res) => {
+  try {
+    const file = req.file;
+    const userId = req.user._id;
+
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    if (!file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ message: "File must be an image" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.profilePicture?.public_id) {
+      await deleteFromCloudinary(user.profilePicture.public_id, "image");
+    }
+
+    const fileName = generateFileName(file.originalname, "profile-");
+    const uploadResult = await uploadProfilePictureToCloudinary(
+      file.buffer,
+      fileName,
+      file.mimetype
+    );
+
+    if (!user.profilePicture) {
+      user.profilePicture = {};
+    }
+
+    user.profilePicture.url = uploadResult.url;
+    user.profilePicture.public_id = uploadResult.public_id;
+    await user.save();
+
+    const updatedUser = await User.findById(userId).select("-password");
+    const userObject = updatedUser.toObject();
+
+    return res.status(200).json({
+      message: "Profile picture uploaded successfully",
+      profilePicture: userObject.profilePicture,
+      user: userObject,
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    console.error("Error stack:", error.stack);
+    return res.status(500).json({
+      message: "Error uploading profile picture",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 export const logout = (req, res) => {
   try {
-    res.clearCookie("jwt", { maxAge: 0, httpOnly: true, secure: true });
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      path: "/",
+    });
     return res.status(200).json({ message: "user logged out" });
   } catch (error) {
-    // console.log("error in logging out:", error.message);
     return res
-      .status(404)
+      .status(500)
       .json({ message: "server error cannot log out Try again" });
   }
 };
@@ -150,14 +224,13 @@ export const logout = (req, res) => {
 export const check_Auth = async (req, res) => {
   try {
     if (!req.user) {
-      // If `req.user` is not present, send a 401 Unauthorized response and stop execution
       return res
         .status(401)
         .json({ message: "Unauthorized: User not authenticated" });
     }
-    return res.status(201).json(req.user);
+    return res.status(200).json(req.user);
   } catch (error) {
-    console.log("error in checking auth controller  ", error.message);
-    return res.status(400).json({ message: "error in checking authorisation" });
+    console.error("Error checking auth:", error.message);
+    return res.status(500).json({ message: "error in checking authorisation" });
   }
 };

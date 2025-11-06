@@ -1,14 +1,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { createServer } from "http";
 import connectDB from "./libs/connect.js";
 import userRoutes from "./routes/userRoutes.js";
 import companionRequestRoutes from "./routes/companionRequestRoutes.js";
+import connectionRoutes from "./routes/connectionRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import housingRoutes from "./routes/housingRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 import errorHandler from "./utils/errorHandler.js";
 import flightroutes from "./routes/flightRoutes.js";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
+import { initializeSocket } from "./socket/socketServer.js";
+import { scheduleReminders } from "./services/reminderScheduler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,17 +54,33 @@ app.use(cookieParser());
 try {
   app.use("/user", userRoutes);
   app.use("/companions", companionRequestRoutes);
+  app.use("/connections", connectionRoutes);
+  app.use("/messages", messageRoutes);
+  app.use("/payments", paymentRoutes);
+  app.use("/subscriptions", subscriptionRoutes);
   app.use("/flights", flightroutes);
+  app.use("/housing", housingRoutes);
+  app.use("/notifications", notificationRoutes);
   console.log("✅ All routes loaded");
 } catch (err) {
   console.error("❌ Route mounting error:", err);
 }
 app.use(errorHandler);
 
+// Create HTTP server for Socket.io
+const server = createServer(app);
+
+// Initialize Socket.io
+const io = initializeSocket(server);
+
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
+      console.log(`Socket.io initialized`);
+
+      // Schedule reminder jobs
+      scheduleReminders();
     });
   })
   .catch((err) => {

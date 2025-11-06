@@ -66,6 +66,10 @@ const companionRequestSchema = new mongoose.Schema(
     emergencyPhone: {
       type: String,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,

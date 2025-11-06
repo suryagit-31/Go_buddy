@@ -60,10 +60,52 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    profilePicture: {
+      url: {
+        type: String,
+        default: null,
+      },
+      public_id: {
+        type: String,
+        default: null,
+      },
+    },
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    subscription: {
+      status: {
+        type: String,
+        enum: [
+          "free",
+          "active",
+          "cancelled",
+          "past_due",
+          "incomplete",
+          "trialing",
+        ],
+        default: "free",
+      },
+      plan: {
+        type: String,
+        enum: ["free", "pro"],
+        default: "free",
+      },
+      stripeCustomerId: {
+        type: String,
+      },
+      stripeSubscriptionId: {
+        type: String,
+      },
+      currentPeriodEnd: {
+        type: Date,
+      },
+      cancelAtPeriodEnd: {
+        type: Boolean,
+        default: false,
+      },
     },
   },
   { timestamps: true }

@@ -1,15 +1,22 @@
 import jwt from "jsonwebtoken";
-import cookieparser from "cookie-parser";
 
 export const generate_token = async (user_id, res) => {
+  // Generate JWT token with 30 days expiration
   const token = jwt.sign({ user_id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "30d", // Increased from 7d to 30d
   });
 
+  // Calculate expiration date (30 days from now)
+  const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  // Set cookie with proper configuration
   res.cookie("jwt", token, {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    sameSite: "strict",
+    expires: expirationDate,
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+    httpOnly: true, // Prevents JavaScript access (security)
+    secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // More permissive for development
+    path: "/", // Available across entire site
   });
 
   return token;
