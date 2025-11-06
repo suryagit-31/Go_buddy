@@ -53,10 +53,9 @@ const allowedOrgins = [
   "http://localhost:3000", // for dev
   "http://localhost:3001",
   "http://localhost:5173", // for dev
-  "https://go-buddy-2.vercel.app",
   "https://go-buddy-alpha.vercel.app",
-  "https://go-buddy-alpha.vercel.app",
-  "https://go-buddy-9m84fm30n-suryadammalapas-projects.vercel.app", // your vercel frontend
+  "https://go-buddy-9m84fm30n-suryadammalapas-projects.vercel.app",
+  "https://go-buddy-nukhjk8nd-suryadammalapas-projects.vercel.app", // your vercel frontend
 ];
 
 app.use(express.json());
