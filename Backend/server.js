@@ -3,21 +3,43 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import connectDB from "./libs/connect.js";
-import userRoutes from "./routes/userRoutes.js";
-import companionRequestRoutes from "./routes/companionRequestRoutes.js";
-import connectionRoutes from "./routes/connectionRoutes.js";
-import messageRoutes from "./routes/messageRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
-import subscriptionRoutes from "./routes/subscriptionRoutes.js";
-import housingRoutes from "./routes/housingRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
 import errorHandler from "./utils/errorHandler.js";
-import flightroutes from "./routes/flightRoutes.js";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import { initializeSocket } from "./socket/socketServer.js";
 import { scheduleReminders } from "./services/reminderScheduler.js";
+
+// Import routes - COMMENT OUT ONE BY ONE TO FIND THE PROBLEMATIC ROUTE
+console.log("Checking route mounting...");
+
+// Try importing routes one by one to identify the problematic one
+import userRoutes from "./routes/userRoutes.js";
+console.log("✅ userRoutes imported");
+
+import companionRequestRoutes from "./routes/companionRequestRoutes.js";
+console.log("✅ companionRequestRoutes imported");
+
+import connectionRoutes from "./routes/connectionRoutes.js";
+console.log("✅ connectionRoutes imported");
+
+import messageRoutes from "./routes/messageRoutes.js";
+console.log("✅ messageRoutes imported");
+
+import paymentRoutes from "./routes/paymentRoutes.js";
+console.log("✅ paymentRoutes imported");
+
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+console.log("✅ subscriptionRoutes imported");
+
+import flightroutes from "./routes/flightRoutes.js";
+console.log("✅ flightroutes imported");
+
+import housingRoutes from "./routes/housingRoutes.js";
+console.log("✅ housingRoutes imported");
+
+import notificationRoutes from "./routes/notificationRoutes.js";
+console.log("✅ notificationRoutes imported");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,11 +83,11 @@ const corsOptions = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-// Handle preflight requests explicitly - use a more specific pattern
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight
-app.options("*", cors(corsOptions));
+// Handle preflight requests - removed wildcard to avoid path-to-regexp issues
+// CORS middleware already handles OPTIONS requests
 
 app.use(cookieParser());
 
