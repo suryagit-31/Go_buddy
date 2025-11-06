@@ -12,6 +12,7 @@ const useFlightStore = create((set, get) => ({
 
   fetchFlights: async (data) => {
     try {
+<<<<<<< HEAD
       set({ isloadingflights: true, available_flights: [] });
       const response = await axiosInstance.post("flights", data);
       console.log("Flight response:", response.data);
@@ -21,6 +22,15 @@ const useFlightStore = create((set, get) => ({
       if (flights.length === 0) {
         toast.info("No flights found for the selected route and date.");
       }
+=======
+      set({ isloadingflights: true });
+      const response = await axiosInstance.post(
+        "https://go-buddy-1-3scd.onrender.com/flights",
+        data
+      );
+      //  console.log("response", response);
+      set({ available_flights: [...response.data], isloadingflights: false });
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
     } catch (error) {
       console.error("Error fetching flights:", error);
       set({ available_flights: [], isloadingflights: false });
@@ -42,7 +52,11 @@ const useFlightStore = create((set, get) => ({
       set({ is_joiningflight: true });
       //   console.log("✈️ Calling flightjoin with:", iata, date);
       const response = await axiosInstance.get(
+<<<<<<< HEAD
         `flights/flightjoin/${iata}/${date}`
+=======
+        `https://go-buddy-1-3scd.onrender.com/flights/flightjoin/${iata}/${date}`
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
       );
       console.log("response", response.data);
       set({ join_flight: response.data });
@@ -58,7 +72,14 @@ const useFlightStore = create((set, get) => ({
   },
   joinFlightasCompanion: async (formData) => {
     try {
+<<<<<<< HEAD
       const response = await axiosInstance.post("/companions", formData);
+=======
+      const response = await axiosInstance.post(
+        "https://go-buddy-1-3scd.onrender.com/companions",
+        formData
+      );
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
       toast.success("joined as companion in", formData.flight_iata);
       return response.data;
     } catch (error) {
@@ -70,7 +91,11 @@ const useFlightStore = create((set, get) => ({
     console.log(flight_iata, flight_date);
     try {
       const response = await axiosInstance.get(
+<<<<<<< HEAD
         `/companions/by-flight/${flight_iata}/${flight_date}`
+=======
+        `https://go-buddy-1-3scd.onrender.com/companions/${flight_iata}/${flight_date}`
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
       );
       console.log("response", response.data);
       set({ OtherCompanions: response.data });
@@ -86,7 +111,11 @@ const useFlightStore = create((set, get) => ({
     const UserMail = encodeURIComponent(data);
     try {
       const response = await axiosInstance.get(
+<<<<<<< HEAD
         `/companions/by-user/${UserMail}`
+=======
+        `https://go-buddy-1-3scd.onrender.com/companions/${UserMail}`
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
       );
       console.log("response", response.data);
       set({ MyBookings: Array.isArray(response.data) ? response.data : [] });

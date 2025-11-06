@@ -29,10 +29,16 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrgins = [
   "http://localhost:3000", // for dev
+<<<<<<< HEAD
   "http://localhost:3001",
   "http://localhost:5173", // for dev
   "https://go-buddy-2.vercel.app",
   "https://go-buddy-alpha.vercel.app", // your vercel frontend
+=======
+  "http://localhost:3001", // for dev
+  "https://go-buddy-2.vercel.app",
+  "https://go-buddy-alpha.vercel.app" // your vercel frontend
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
 ];
 
 app.use(express.json());

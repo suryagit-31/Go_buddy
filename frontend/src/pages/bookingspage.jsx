@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import PageTransition from "../components/pagetransition";
+<<<<<<< HEAD
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plane,
@@ -14,6 +15,10 @@ import {
   Search,
   Loader,
 } from "lucide-react";
+=======
+import { motion } from "framer-motion";
+import { Plane, Calendar, User, X, Hash,  DollarSign, Phone } from "lucide-react";
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
 import useAuthStore from "../store/useAuthstore";
 import useFlightStore from "../store/useflightstore";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +49,7 @@ const BookingsPage = () => {
 
   useEffect(() => {
     fetchUserBookings();
-  }, [fetchUserBookings]);
+  }, [authUser?.email, Get_Mybookings]);
 
   useEffect(() => {
     if (Array.isArray(MyBookings)) {
@@ -223,6 +228,7 @@ const BookingsPage = () => {
                           </div>
                         </motion.div>
 
+<<<<<<< HEAD
                         {/* Seat Number */}
                         <motion.div
                           initial={{ opacity: 0, x: -20 }}
@@ -244,6 +250,44 @@ const BookingsPage = () => {
                             </p>
                           </div>
                         </motion.div>
+=======
+                      
+                      {/* Passenger Role */}
+                      <div className="flex items-center">
+                        <Hash className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Role
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {booking.passenger_role || "Not Assigned"}
+                          </p>
+
+                          {booking.passenger_role === "helper" && (
+                            <div className="flex items-center space-x-1 mt-1">
+                              <span className="text-base text-neutral-900 font-medium">
+                                Price: {booking.helperPrice ?? "Not Assigned"}
+                              </span>
+                              <DollarSign className="h-4 w-4 text-primary-600" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+
+                      {/* Passenger Name */}
+                      <div className="flex items-center">
+                        <User className="h-5 w-5 text-neutral-400 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-neutral-500">
+                            Passenger Name
+                          </p>
+                          <p className="text-base text-neutral-900">
+                            {booking.name}
+                          </p>
+                        </div>
+                      </div>
+>>>>>>> 30b81bf8857f2dc693297013e31a48c449b043af
 
                         {/* Passenger Role */}
                         <motion.div
