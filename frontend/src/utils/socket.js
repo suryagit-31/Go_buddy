@@ -2,11 +2,25 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
+// Determine base URL based on environment
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  if (import.meta.env.PROD) {
+    return "https://go-buddy-1.onrender.com";
+  }
+  
+  return "http://localhost:5000";
+};
+
 export const initializeSocket = () => {
   const token = document.cookie.split("jwt=")[1]?.split(";")[0];
+  const baseURL = getBaseURL();
 
   if (!socket && token) {
-    socket = io(import.meta.env.VITE_API_URL || "http://localhost:5000", {
+    socket = io(baseURL, {
       auth: { token },
       transports: ["websocket", "polling"],
       reconnection: true,
