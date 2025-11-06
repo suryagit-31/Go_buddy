@@ -7,11 +7,11 @@ const getBaseURL = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  
+
   if (import.meta.env.PROD) {
-    return "https://go-buddy-1.onrender.com";
+    return "https://go-buddy-zm0k.onrender.com";
   }
-  
+
   return "http://localhost:5000";
 };
 

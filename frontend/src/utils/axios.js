@@ -10,7 +10,7 @@ const getBaseURL = () => {
   // Auto-detect production environment
   if (import.meta.env.PROD) {
     // Production: Use your backend URL
-    return "https://go-buddy-1.onrender.com";
+    return "https://go-buddy-zm0k.onrender.com";
   }
 
   // Development: Use localhost
