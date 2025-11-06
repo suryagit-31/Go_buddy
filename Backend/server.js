@@ -61,11 +61,11 @@ const corsOptions = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-// Apply CORS middleware
+// Handle preflight requests explicitly - use a more specific pattern
 app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly - use a more specific pattern
-app.options("/*", cors(corsOptions));
+// Handle preflight
+app.options("*", cors(corsOptions));
 
 app.use(cookieParser());
 

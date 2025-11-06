@@ -1,6 +1,7 @@
 # Render.com Environment Variables Checklist
 
 ## ✅ Currently Set (Good!)
+
 - ✅ MONGO_URI
 - ✅ JWT_SECRET
 - ✅ CLOUDINARY_CLOUD_NAME
@@ -14,22 +15,28 @@
 ## ⚠️ CRITICAL: Missing Variables (Must Add!)
 
 ### 1. NODE_ENV (REQUIRED)
+
 **Value:** `production`
-**Why:** 
+**Why:**
+
 - Sets cookies to use `secure: true` and `sameSite: "none"` for cross-origin
 - Affects error handling and CORS behavior
 - Critical for production deployment
 
 ### 2. FRONTEND_URL (REQUIRED)
+
 **Value:** `https://go-buddy-alpha.vercel.app`
 **Why:**
+
 - Used by Socket.io for CORS configuration
 - Allows real-time connections from your frontend
 - Without this, Socket.io connections will fail
 
 ### 3. STRIPE_WEBHOOK_SECRET (Optional but Recommended)
+
 **Value:** Your Stripe webhook secret
 **Why:**
+
 - Needed if you're using Stripe webhooks for subscription updates
 - Get it from Stripe Dashboard → Webhooks → Your webhook → Signing secret
 
@@ -83,4 +90,3 @@ FRONTEND_URL=https://go-buddy-alpha.vercel.app
 - PORT is usually set automatically by Render (don't need to set it manually)
 - Make sure your frontend URL matches exactly: `https://go-buddy-alpha.vercel.app`
 - NODE_ENV must be exactly `production` (lowercase)
-
